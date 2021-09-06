@@ -1,4 +1,4 @@
-# 🏓 Pong
+# 🏓 Pong 🏓
 
 Built in Rust following [Amethyst.rs' pong tutorial](https://book.amethyst.rs/book/stable/pong-tutorial).
 
