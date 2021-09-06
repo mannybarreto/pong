@@ -1,11 +1,14 @@
 use amethyst::{
     core::{Transform, SystemDesc},
-    derive::{SystemDesc},
+    derive::SystemDesc,
     ecs::{Join, Read, ReadStorage, System, SystemData, World, WriteStorage},
-    input::{InputHandler, StringBindings},
+    input::{InputHandler, StringBindings}
 };
 
-use crate::pong::{Paddle, Side, ARENA_HEIGHT, PADDLE_HEIGHT};
+use crate::{
+   pong::{ARENA_HEIGHT, PADDLE_HEIGHT},
+   components::{Paddle, Side},
+};
 
 #[derive(SystemDesc)]
 pub struct PaddleSystem;
