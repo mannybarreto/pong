@@ -23,9 +23,6 @@ impl SimpleState for Pong {
         // Load necessary spritesheet
         let sprite_sheet_handle = load_spite_sheet(world);
 
-        // TODO(mannybarreto): Register paddles and such in a system.
-        world.register::<Paddle>();
-
         initialize_paddles(world, sprite_sheet_handle);
         initialize_camera(world);
     }

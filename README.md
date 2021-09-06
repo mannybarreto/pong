@@ -8,6 +8,10 @@ Built in Rust following [Amethyst.rs' pong tutorial](https://book.amethyst.rs/bo
 ## Building
 `cargo build`
 
+## Caviats
+
+* I ran into `[BUG] attempted to leave type platform::platform::x11::util::input::PointerState uninitialized`, which required me to run `rustup override set 1.47.0` in project directory. [Credit](https://github.com/amethyst/amethyst/issues/2524#issuecomment-817255546).
+
 ## Motivation
 * Research and apply Entity Component System architecture.
 * Learn and apply some Rust.
