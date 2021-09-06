@@ -2,11 +2,11 @@
 
 Built in Rust following [Amethyst.rs' pong tutorial](https://book.amethyst.rs/book/stable/pong-tutorial).
 
+## Running
+`cargo run`
+
 ## Building
 `cargo build`
-
-## Running Game
-`cargo run`
 
 ## Motivation
 * Research and apply Entity Component System architecture.
@@ -16,5 +16,6 @@ Built in Rust following [Amethyst.rs' pong tutorial](https://book.amethyst.rs/bo
 
 ## Goals
 * [ ] Build pong following tutorial.
+* [ ] Write tests.
 * [ ] Expand a feature or two into the game for practice.
 * [ ] *Optional:* Build to wasm for blog.
