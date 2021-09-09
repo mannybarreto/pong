@@ -1,17 +1,15 @@
 extern crate amethyst;
 
 use amethyst::{
-    assets::{AssetStorage, Loader, Handle},
-    core::{
-        timing::Time,
-        transform::Transform,
-    },
-    ecs::{Component, DenseVecStorage},
+    assets::{AssetStorage, Handle, Loader},
+    core::{timing::Time, transform::Transform},
+    ecs::{Component, DenseVecStorage, Entity},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
+    ui::{Anchor, LineMode, TtfFormat, UiText, UiTransform},
 };
 
-use crate::{components::{Ball, Paddle, Side}};
+use crate::components::{Ball, Paddle, Side};
 
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
@@ -43,6 +41,7 @@ impl SimpleState for Pong {
 
         initialize_paddles(world, self.sprite_sheet_handle.clone().unwrap());
         initialize_camera(world);
+        initialize_scoreboard(world);
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
@@ -64,21 +63,30 @@ impl SimpleState for Pong {
     }
 }
 
+/// ScoreBoard contains the actual score data
+#[derive(Default)]
+pub struct ScoreBoard {
+    pub score_left: i32,
+    pub score_right: i32,
+}
+
+/// ScoreText contains the ui text components that display the score
+pub struct ScoreText {
+    pub p1_score: Entity,
+    pub p2_score: Entity,
+}
+
 fn initialize_camera(world: &mut World) {
-    // Setup camera in a way that our screen covers whole arena 
+    // Setup camera in a way that our screen covers whole arena
     // and (0, 0) is in the bottom left.
     let mut transform = Transform::default();
-    transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT *0.5, 1.0);
+    transform.set_translation_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 1.0);
 
     world
         .create_entity()
         .with(Camera::standard_2d(ARENA_WIDTH, ARENA_HEIGHT))
         .with(transform)
         .build();
-}
-
-impl Component for Paddle {
-    type Storage = DenseVecStorage<Self>;
 }
 
 /// Initialises two paddles: one on the left, another on the right.
@@ -92,7 +100,7 @@ fn initialize_paddles(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet
     right_transform.set_translation_xyz(ARENA_WIDTH - PADDLE_WIDTH, y, 0.0);
 
     // Assign the sprites for the paddles
-    let sprite_render = SpriteRender::new(sprite_sheet_handle, 0);  // paddle is the first sprite in the sprite_sheet
+    let sprite_render = SpriteRender::new(sprite_sheet_handle, 0); // paddle is the first sprite in the sprite_sheet
 
     // Create left paddle entity.
     world
@@ -128,7 +136,6 @@ fn initialize_ball(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) 
         })
         .with(local_transform)
         .build();
-
 }
 
 fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
@@ -139,13 +146,12 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-                "texture/pong_spritesheet.png",
-                ImageFormat::default(),
-                (),
-                &texture_storage,
-            )
+            "texture/pong_spritesheet.png",
+            ImageFormat::default(),
+            (),
+            &texture_storage,
+        )
     };
-
 
     let loader = world.read_resource::<Loader>();
     let sprite_sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
@@ -157,3 +163,59 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
     )
 }
 
+fn initialize_scoreboard(world: &mut World) {
+    let font = world.read_resource::<Loader>().load(
+        "font/square.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+    let p1_transform = UiTransform::new(
+        "P1".to_string(),
+        Anchor::TopMiddle,
+        Anchor::TopMiddle,
+        -50.,
+        -50.,
+        1.,
+        200.,
+        50.,
+    );
+    let p2_transform = UiTransform::new(
+        "P2".to_string(),
+        Anchor::TopMiddle,
+        Anchor::TopMiddle,
+        50.,
+        -50.,
+        1.,
+        200.,
+        50.,
+    );
+
+    let p1_score = world
+        .create_entity()
+        .with(p1_transform)
+        .with(UiText::new(
+            font.clone(),
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+            LineMode::Single,
+            Anchor::Middle,
+        ))
+        .build();
+
+    let p2_score = world
+        .create_entity()
+        .with(p2_transform)
+        .with(UiText::new(
+            font,
+            "0".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+            LineMode::Single,
+            Anchor::Middle,
+        ))
+        .build();
+
+    world.insert(ScoreText { p1_score, p2_score });
+}

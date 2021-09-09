@@ -1,3 +1,4 @@
+use amethyst::ecs::{Component, DenseVecStorage};
 use crate::pong::{PADDLE_HEIGHT, PADDLE_WIDTH};
 
 #[derive(PartialEq, Eq)]
@@ -22,3 +23,6 @@ impl Paddle {
     }
 }
 
+impl Component for Paddle {
+    type Storage = DenseVecStorage<Self>;
+}

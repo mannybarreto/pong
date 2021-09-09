@@ -10,4 +10,4 @@ edition = "2018"
 
 [dependencies.amethyst]
 version = "0.15"
-features = ["vulkan"]
+features = ["metal"]
